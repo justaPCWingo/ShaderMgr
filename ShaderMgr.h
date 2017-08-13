@@ -1,6 +1,6 @@
 //
 //  ShaderMgr.h
-//  OGL Tools
+//  SimpleBall
 //
 //  Created by Patrick  Wingo on 9/1/13.
 //  Copyright (c) 2013 Patrick  Wingo. All rights reserved.
@@ -10,14 +10,7 @@
 #include <iostream>
 #include <fstream>
 #include <map>
-#ifdef __APPLE__
 #include <OpenGL/gl3.h>
-#else
-#ifdef _WIN32
-#include <windows.h>
-#endif
-#include <GL/gl3.h>
-#endif
 
 #define ADDROFFSET(x) (char*)NULL+(sizeof(float)*(x))
 
@@ -48,6 +41,7 @@ public:
     ProgItr ProgEnd() { return m_progs.end(); }
     
     inline void SetRelativeDirectory(const STLString & str) { m_relDir=str;}
+    inline STLString GetRelativeDirectory() const {return m_relDir;}
     
     
 private:

@@ -1,6 +1,6 @@
 //
 //  ShaderMgr.cpp
-//  OGL Tools
+//  SimpleBall
 //
 //  Created by Patrick  Wingo on 9/1/13.
 //  Copyright (c) 2013 Patrick  Wingo. All rights reserved.
@@ -9,31 +9,22 @@
 #include "ShaderMgr.h"
 #include <iostream>
 
-#ifndef VERT_EXT
-#define VERT_EXT ".vert"
-#endif
-#ifndef FRAG_EXT
-#define FRAG_EXT ".frag"
-#endif
-#ifndef GEOM_EXT
-#define GEOM_EXT ".geom"
-#endif
-#ifndef COMP_EXT
-#define COMP_EXT ".comp"
-#endif
-#ifndef TCS_EXT
-#define TCS_EXT ".tcs"
-#endif
-#ifndef TES_EXT
-#define TES_EXT ".tes"
-#endif
+//extern const char* VERT_EXT;
+//extern const char* FRAG_EXT;
+//extern const char* GEOM_EXT;
+
+const char* VERT_EXT=".vert";
+const char* FRAG_EXT=".frag";
+const char* GEOM_EXT=".geom";
+const char* COMP_EXT=".comp";
+const char* TCS_EXT=".tcs";
+const char* TES_EXT=".tes";
 
 enum {V_SHAD,F_SHAD,G_SHAD,TE_SHAD,TC_SHAD,C_SHAD,SHADCOUNT};
 
 /** \addtogroup fileExts Supported Shader file extensions
     @{
         These are the expected shader extensions for use with this class.
-        Shader extensions can be modified by overriding preprocessor macros in ShaerMgr.cpp
         - __.vert__ - Vertex Shader.
         - __.frag__ - Fragment Shader.
         - __.geom__ - Geometry Shader.
@@ -81,27 +72,27 @@ GLuint ShaderMgr::ProgForName(const STLString & name)
  */
 GLuint ShaderMgr::LoadShaderProgramSet(const STLString & name,const bool & useLazy)
 {
-    STLString vertPath=m_relDir+name+VERT_EXT;
-    STLString fragPath=m_relDir+name+FRAG_EXT;
-    STLString geomPath=m_relDir+name+GEOM_EXT;
-    STLString compPath=m_relDir+name+COMP_EXT;
-    STLString teevPath=m_relDir+name+TES_EXT;
-    STLString tectPath=m_relDir+name+TCS_EXT;
+    STLString vertPath=name+VERT_EXT;
+    STLString fragPath=name+FRAG_EXT;
+    STLString geomPath=name+GEOM_EXT;
+    STLString compPath=name+COMP_EXT;
+    STLString teevPath=name+TES_EXT;
+    STLString tectPath=name+TCS_EXT;
     
-    if(!FileExists(vertPath.c_str()))
+    if(!FileExists((m_relDir+vertPath).c_str()))
         vertPath.clear();
-    if(!FileExists(fragPath.c_str()))
+    if(!FileExists((m_relDir+fragPath).c_str()))
         fragPath.clear();
-    if(!FileExists(geomPath.c_str()))
+    if(!FileExists((m_relDir+geomPath).c_str()))
         geomPath.clear();
-    if(!FileExists(compPath.c_str()))
+    if(!FileExists((m_relDir+compPath).c_str()))
         compPath.clear();
-    if(!FileExists(teevPath.c_str()))
+    if(!FileExists((m_relDir+teevPath).c_str()))
         teevPath.clear();
-    if(!FileExists(tectPath.c_str()))
+    if(!FileExists((m_relDir+tectPath).c_str()))
         tectPath.clear();
 
-    
+    //remove prefix from path
     if(useLazy)
     {
         LazyLoads entry;
@@ -183,15 +174,14 @@ GLuint ShaderMgr::LoadShaderProgram(const STLString & name, const STLString & ve
             std::cout<<"Err! no Tessellation Control Shader found! Skipping "<<teevFile<<std::endl;
     }
 
-#ifdef GL_COMPUTE_SHADER
-    if(!compFile.empty())
-    {
-        std::cout<<"Loading Compute Shader "<<compFile<<std::endl;
-        shaders[C_SHAD]=ConstructShader(compFile, GL_COMPUTE_SHADER);
-        go=shaders[C_SHAD]>0;
-    }
-#endif
-    
+    //enable if/when OS X supports compute shaders
+//    if(!compFile.empty())
+//    {
+//        std::cout<<"Loading Compute Shader "<<compFile<<std::endl;
+//        shaders[C_SHAD]=ConstructShader(fragFile, GL_COMPUTE_SHADER);
+//        go=shaders[C_SHAD]>0;
+//    }
+
     if(go)
     {
         ret=glCreateProgram();
@@ -329,7 +319,7 @@ int ShaderMgr::CompileFile(const STLString & filepath,const GLuint shader)
         fullPath=m_relDir+fullPath;
     
 	using namespace std;
-	ifstream file(filepath,ifstream::in);
+	ifstream file(fullPath,ifstream::in);
     //	file.open(filepath,ios::in); //ASCII
 	if(!file || !file.good())
 		return 0;
